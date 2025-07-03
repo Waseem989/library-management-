@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Simple Library Form</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    h2 { margin-top: 30px; color: #333; }
+    .book-box { margin-left: 20px; padding: 5px; background: #f2f2f2; border-radius: 4px; margin-bottom: 5px; }
+  </style>
+</head>
+<body>
+
+  <h1>Library Management</h1>
+<button onclick="location.href='user.html'" style="float:right;">Logout</button>
+  <form id="bookForm">
+    <input type="text" id="bookName" placeholder="Book Name" required><br><br>
+    <input type="text" id="authorName" placeholder="Author Name" required><br><br>
+    <input type="text" id="category" placeholder="Category" required><br><br>
+    <button type="submit">Add Book</button>
+  </form>
+  <hr>
+
+  <div id="bookContainer"></div>
+
+  <script>
+    const form = document.getElementById("bookForm");
+    const container = document.getElementById("bookContainer");
+
+    let books = JSON.parse(localStorage.getItem("books")) || [];
+
+ form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const name = document.getElementById("bookName").value.trim();
+      const author = document.getElementById("authorName").value.trim();
+      const category = document.getElementById("category").value.trim();
+
+      if (name && author && category) {
+        books.push({ name, author, category });
+        saveBooks();
+        renderBooks();
+        form.reset();
+      }
+    });
+
+
+    function saveBooks() {
+      localStorage.setItem("books", JSON.stringify(books));
+    }
+
+    function renderBooks() {
+      container.innerHTML = "";
+      const grouped = {};
+
+      books.forEach(book => {
+        if (!grouped[book.category]) {
+          grouped[book.category] = [];
+        }
+        grouped[book.category].push(book);
+      });
+
+      for (let category in grouped) {
+        const section = document.createElement("div");
+        const heading = document.createElement("h2");
+        heading.textContent = category;
+        section.appendChild(heading);
+
+        grouped[category].forEach(book => {
+          const box = document.createElement("div");
+          box.className = "book-box";
+          box.innerHTML = `<strong>${book.name}</strong> by ${book.author}`;
+          section.appendChild(box);
+        });
+
+        container.appendChild(section);
+      }
+    }
+
+   
+
+    // Render existing data on page load
+    renderBooks();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Library - User View</title>
+  <style>
+     body { font-family: Arial, sans-serif; padding: 20px; }
+    h2 { margin-top: 30px; color: #333; }
+    h1 { color: #444; }
+   
+    .book-box {
+      margin-left: 20px; padding: 5px; background: #f2f2f2; border-radius: 4px; margin-bottom: 5px; 
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📚 Library Collection</h1>
+<button onclick="location.href='admin.html'" style="float:right;">Admin Panel</button>
+  <div id="bookDisplay"></div>
+
+  <script>
+    const container = document.getElementById("bookDisplay");
+
+    const books = JSON.parse(localStorage.getItem("books")) || [];
+    const grouped = {};
+
+    books.forEach(book => {
+      if (!grouped[book.category]) {
+        grouped[book.category] = [];
+      }
+      grouped[book.category].push(book);
+    });
+
+    for (let category in grouped) {
+      const section = document.createElement("div");
+      const heading = document.createElement("h2");
+      heading.textContent = category;
+      section.appendChild(heading);
+
+      grouped[category].forEach(book => {
+        const box = document.createElement("div");
+        box.className = "book-box";
+        box.innerHTML = `📖 <strong>${book.name}</strong> by ${book.author}`;
+        section.appendChild(box);
+      });
+
+      container.appendChild(section);
+    }
+  </script>
+
+</body>
+</html>
